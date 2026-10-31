@@ -1,0 +1,306 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "model": "openrouter/anthropic/claude-haiku-5.5",
+  "default_agent": "build",
+  "plugins": [
+    {
+      "package": "@devtheops/opencode-plugin-otel",
+      "options": {
+        "enabled": true,
+        "endpoint": "http://localhost:4318",
+        "protocol": "http/protobuf"
+      }
+    },
+    "@rizal72/oc-git",
+    "@rizal72/oc-ponytail-widget",
+    "./plugins"
+  ],
+  "permissions": [
+    {
+      "action": "external_directory",
+      "resource": "*",
+      "effect": "ask"
+    },
+    {
+      "action": "shell",
+      "resource": "*",
+      "effect": "ask"
+    },
+    {
+      "action": "shell",
+      "resource": "git status *",
+      "effect": "allow"
+    },
+    {
+      "action": "shell",
+      "resource": "git diff *",
+      "effect": "allow"
+    },
+    {
+      "action": "shell",
+      "resource": "git log *",
+      "effect": "allow"
+    },
+    {
+      "action": "shell",
+      "resource": "git push *",
+      "effect": "deny"
+    },
+    {
+      "action": "shell",
+      "resource": "git reset --hard *",
+      "effect": "deny"
+    },
+    {
+      "action": "shell",
+      "resource": "curl *",
+      "effect": "deny"
+    },
+    {
+      "action": "shell",
+      "resource": "wget *",
+      "effect": "deny"
+    },
+    {
+      "action": "webfetch",
+      "resource": "*",
+      "effect": "deny"
+    },
+    {
+      "action": "websearch",
+      "resource": "*",
+      "effect": "deny"
+    }
+  ],
+  "policies": [
+    {
+      "action": "tool.use",
+      "resource": "shell:git push --force*",
+      "effect": "deny"
+    },
+    {
+      "action": "tool.use",
+      "resource": "shell:git push -f*",
+      "effect": "deny"
+    }
+  ],
+  "skills": [
+    "~/.local/share/opencode/dotnet-skills/plugins/dotnet/skills"
+  ],
+  "instructions": [
+    "~/.config/opencode/rules/cache-hygiene.md",
+    "~/.config/opencode/rules/spec-handoff.md",
+    "FACTORY-STANDARDS.md"
+  ],
+  "experimental": {
+    "todo": true
+  },
+  "watcher": {
+    "ignore": [
+      ".opencode/worktrees/**"
+    ]
+  },
+  "warming": {
+    "interval": "4 minutes",
+    "duration": "30 minutes"
+  },
+  "tool_output": {
+    "max_lines": 400,
+    "max_bytes": 32768
+  },
+  "providers": {
+    "llama.cpp": {
+      "name": "llama.cpp (local)",
+      "package": "@opencode/ai/providers/openai-compatible",
+      "settings": {
+        "baseURL": "http://127.0.0.1:8080/v1"
+      },
+      "models": {
+        "deepseek-r1-distill-qwen-1.5b-q4_k_m": {
+          "name": "DeepSeek-R1-Distill-Qwen-1.5B-Q4_K_M.gguf (local)",
+          "modelID": "deepseek-r1-distill-qwen-1.5b-q4_k_m",
+          "capabilities": {
+            "tools": true,
+            "input": [
+              "text"
+            ],
+            "output": [
+              "text"
+            ]
+          },
+          "limit": {
+            "context": 32768,
+            "output": 8192
+          },
+          "disabled": false
+        },
+        "deepseek-r1-distill-qwen-1.5b-q8_0": {
+          "name": "DeepSeek-R1-Distill-Qwen-1.5B-Q8_0.gguf (local)",
+          "modelID": "deepseek-r1-distill-qwen-1.5b-q8_0",
+          "capabilities": {
+            "tools": true,
+            "input": [
+              "text"
+            ],
+            "output": [
+              "text"
+            ]
+          },
+          "limit": {
+            "context": 32768,
+            "output": 8192
+          },
+          "disabled": false
+        }
+      }
+    },
+    "openrouter": {
+      "name": "OpenRouter",
+      "package": "@opencode/ai/providers/openrouter",
+      "env": [
+        "OPENROUTER_API_KEY"
+      ],
+      "models": {
+        "anthropic/claude-haiku-5.5": {
+          "body": {
+            "provider": {
+              "order": [
+                "parasail",
+                "deepinfra"
+              ],
+              "allow_fallbacks": false
+            }
+          }
+        },
+        "anthropic/claude-opus-5.5": {
+          "body": {
+            "provider": {
+              "order": [
+                "anthropic"
+              ],
+              "allow_fallbacks": false
+            }
+          }
+        },
+        "typesafe/jev-1.13": {
+          "name": "Jev System One 1.13 (via OpenRouter)",
+          "body": {
+            "provider": {
+              "order": [
+                "typesafe"
+              ],
+              "allow_fallbacks": false
+            }
+          }
+        }
+      }
+    },
+    "typesafe": {
+      "name": "TypeSafe AI",
+      "package": "@opencode/ai/providers/typesafe",
+      "env": [
+        "TYPESAFE_API_KEY"
+      ],
+      "models": {
+        "jev-1.13": {
+          "name": "Jev System One 1.13",
+          "modelID": "typesafe/jev-1.13",
+          "capabilities": {
+            "tools": false,
+            "input": [
+              "text"
+            ],
+            "output": [
+              "structured"
+            ]
+          },
+          "limit": {
+            "context": 128000,
+            "output": 4096
+          }
+        }
+      }
+    },
+    "huggingface": {
+      "env": [
+        "HF_TOKEN"
+      ],
+      "settings": {
+        "apiKey": "{env:HF_TOKEN}"
+      }
+    }
+  },
+  "agents": {
+    "build": {
+      "model": "openrouter/anthropic/claude-haiku-5.5#low",
+      "steps": 20,
+      "color": "#cba6f7",
+      "description": "Task execution agent"
+    },
+    "plan": {
+      "model": "openrouter/anthropic/claude-haiku-5.5#low",
+      "steps": 20,
+      "color": "#b4befe",
+      "description": "Reasoning/planning agent",
+      "permissions": [
+        {
+          "action": "edit",
+          "resource": "*",
+          "effect": "deny"
+        },
+        {
+          "action": "edit",
+          "resource": ".opencode/plans/*",
+          "effect": "allow"
+        }
+      ]
+    },
+    "explore": {
+      "model": "openrouter/anthropic/claude-haiku-5.5#low"
+    },
+    "title": {
+      "model": "openrouter/anthropic/claude-haiku-5.5#low"
+    },
+    "summary": {
+      "model": "openrouter/anthropic/claude-haiku-5.5#low"
+    },
+    "compaction": {
+      "model": "openrouter/anthropic/claude-haiku-5.5#low"
+    }
+  },
+  "mcp": {
+    "servers": {
+      "bitwarden": {
+        "disabled": true,
+        "type": "local",
+        "command": [
+          "npx",
+          "-y",
+          "@bitwarden/mcp-server"
+        ],
+        "environment": {
+          "BW_SESSION": "{env:BW_SESSION}"
+        }
+      },
+      "context7": {
+        "type": "remote",
+        "url": "https://mcp.context7.com/mcp"
+      },
+      "codescene": {
+        "type": "local",
+        "command": [
+          "npx",
+          "-y",
+          "@codescene/codehealth-mcp"
+        ]
+      },
+      "graphicle": {
+        "type": "local",
+        "command": [
+          "graphicle",
+          "mcp"
+        ]
+      }
+    }
+  }
+}

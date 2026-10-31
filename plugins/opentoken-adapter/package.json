@@ -1,0 +1,11 @@
+{
+  "name": "opentoken-adapter",
+  "version": "1.0.0",
+  "description": "V1 OpenToken plugin adapter for OpenCode V2",
+  "type": "module",
+  "main": "index.ts",
+  "dependencies": {
+    "@opencode/plugin": "^2.0.20",
+    "@mrgray17/opentoken": "^2.2.0"
+  }
+}

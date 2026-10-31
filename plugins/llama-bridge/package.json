@@ -1,0 +1,13 @@
+{
+  "name": "opencode-llama-bridge",
+  "version": "1.0.0",
+  "description": "Bridge opencode model selection to llama-server restart and config sync",
+  "type": "module",
+  "private": true,
+  "exports": {
+    ".": "./index.ts"
+  },
+  "dependencies": {
+    "@opencode/plugin": "latest"
+  }
+}

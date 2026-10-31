@@ -1,0 +1,14 @@
+{
+  "name": "opencode-voice-dictation",
+  "version": "0.1.0",
+  "type": "module",
+  "private": true,
+  "description": "Push-to-talk dictation for the OpenCode TUI — local whisper.cpp STT, transcript to clipboard/composer",
+  "exports": {
+    ".": "./index.ts",
+    "./tui": "./tui.ts"
+  },
+  "dependencies": {
+    "@opencode/plugin": "latest"
+  }
+}
