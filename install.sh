@@ -20,6 +20,7 @@ CONFIG_DST="${XDG_CONFIG_HOME:-$HOME/.config}/opencode"
 # 1. Check / install OpenCode and enforce 2.x
 # ---------------------------------------------------------------------------
 check_or_install_opencode() {
+  pattern_version='v?2\.[0-9]+(\.[0-9]+)*$'
   if command -v opencode >/dev/null 2>&1; then
     local version
     version=$(opencode --version 2>/dev/null || true)
@@ -31,7 +32,7 @@ check_or_install_opencode() {
     info "Found OpenCode: $version"
 
     # Accept anything that starts with 2. (2.0, 2.0.26, v2.0.1, etc.)
-    if [[ "$version" =~ ^v?2\. ]]; then
+    if [[ "$version" =~ $pattern_version ]]; then
       info "OpenCode 2.x confirmed – good."
     else
       error "OpenCode is installed but is not version 2.x (got: $version).
@@ -44,6 +45,7 @@ Please upgrade or uninstall the old version and re-run this script."
 
     # Make sure the new binary is on PATH for the rest of this script
     export PATH="$HOME/.opencode/bin:$PATH"
+    info "Updated PATH to include OpenCode binary. around $HOME/.opencode/bin"
 
     if ! command -v opencode >/dev/null 2>&1; then
       error "Installation appeared to succeed but 'opencode' is still not on PATH.
@@ -54,7 +56,7 @@ Try opening a new terminal and re-running this script."
     new_version=$(opencode --version 2>/dev/null || true)
     info "Installed OpenCode: $new_version"
 
-    if [[ ! "$new_version" =~ ^v?2\. ]]; then
+    if [[ ! "$new_version" =~ $pattern_version ]]; then
       error "Installed version is not 2.x (got: $new_version). Something went wrong."
     fi
   fi
@@ -105,10 +107,46 @@ install_config() {
   info "Config installed successfully."
 }
 
+check_node_installed() {
+    # Define ANSI escape codes for formatting
+    local red='\033[0;31m'
+    local green='\033[0;32m'
+    local bold='\033[1m'
+    local reset='\033[0m'
+
+    if ! command -v node &> /dev/null; then
+        # Print a bold, red X using the Unicode heavy multiplication X character
+        printf "${red}${bold}✘${reset} Node.js is not installed.\n"
+        return 0
+    else
+        printf "${green}${bold}✔${reset} Node.js is installed: %s\n" "$(node -v)"
+        return 0
+    fi
+}
+
+check_graphicle_installed() {
+    # Define ANSI escape codes for formatting
+    local red='\033[0;31m'
+    local green='\033[0;32m'
+    local bold='\033[1m'
+    local reset='\033[0m'
+
+    if ! command -v graphicle &> /dev/null; then
+        # Print a bold, red X using the Unicode heavy multiplication X character
+        printf "${red}${bold}✘${reset} Graphicle is not installed.\n"
+        return 0
+    else
+        printf "${green}${bold}✔${reset} Graphicle is installed: %s\n" "$(graphicle -v)"
+        return 0
+    fi
+}
+
 # ---------------------------------------------------------------------------
 # Main
 # ---------------------------------------------------------------------------
 main() {
+  echo
+  check_node_installed
   echo
   info "OpenCode Config Installer"
   echo
@@ -116,7 +154,7 @@ main() {
   check_or_install_opencode
   echo
   install_config
-
+  
   echo
   info "Done!"
   info "Run 'opencode' in any project to start."
