@@ -40,7 +40,6 @@ The caller gives you the path to a plan file, normally in `~/.opencode/plan/`, a
    Use lowercase snake_case file names. If the topic directory already exists, read it first and update rather than duplicate.
 
 ## Spec layout
-Follow the existing specs in `~/.opencode/specs/phase2/`:
 - Title: `# Spec N — <name>`
 - **Depends on:** other specs, or nothing
 - **Goal:** one short paragraph, including what is out of scope

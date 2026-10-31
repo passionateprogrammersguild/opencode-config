@@ -141,12 +141,30 @@ check_graphicle_installed() {
     fi
 }
 
+check_llamacpp_installed() {
+    # Define ANSI escape codes for formatting
+    local red='\033[0;31m'
+    local green='\033[0;32m'
+    local bold='\033[1m'
+    local reset='\033[0m'
+
+    if llama-server --version > /dev/null 2>&1; then
+        printf "${green}${bold}✔${reset} llama-server is installed and working.\n"
+        return 0
+    else
+        printf "${red}${bold}✘${reset} llama-server is not installed or not working.\n"
+        return 0
+    fi
+}
+
 # ---------------------------------------------------------------------------
 # Main
 # ---------------------------------------------------------------------------
 main() {
   echo
   check_node_installed
+  echo
+  check_graphicle_installed
   echo
   info "OpenCode Config Installer"
   echo
